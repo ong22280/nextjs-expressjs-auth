@@ -1,19 +1,5 @@
+import { NotificationType, ShowNotification } from "@/types/notificationType";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-export enum NotificationType {
-  Success = "success",
-  Error = "error",
-  Warning = "warning",
-  Info = "info",
-}
-
-type Notification = {
-  open: boolean;
-  message: string;
-  type: NotificationType;
-};
-
-type ShowNotification = Omit<Notification, "open">;
 
 const initialState = {
   open: false,

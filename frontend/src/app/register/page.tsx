@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../libs/hooks/redux-hooks";
 import { register } from "../../slices/authSlice";
-import {
-  showNotification,
-  NotificationType,
-} from "../../slices/notificationSlice";
+import { showNotification } from "../../slices/notificationSlice";
 import Link from "next/link";
+import { NotificationType } from "@/types/notificationType";
 
 const Register = () => {
   const dispatch = useAppDispatch();

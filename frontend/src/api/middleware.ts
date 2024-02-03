@@ -1,8 +1,6 @@
 import { Middleware } from "@reduxjs/toolkit";
-import {
-  showNotification,
-  NotificationType,
-} from "../slices/notificationSlice";
+import { showNotification } from "../slices/notificationSlice";
+import { NotificationType } from "@/types/notificationType";
 
 export const axiosMiddleware: Middleware =
   ({ dispatch }) =>

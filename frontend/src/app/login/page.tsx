@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { useAppDispatch } from "../../libs/hooks/redux-hooks";
 import { login } from "../../slices/authSlice";
-import {
-  showNotification,
-  NotificationType,
-} from "../../slices/notificationSlice";
+import { showNotification } from "../../slices/notificationSlice";
 import Link from "next/link";
+import { NotificationType } from "@/types/notificationType";
 
 const Login = () => {
   const dispatch = useAppDispatch();
