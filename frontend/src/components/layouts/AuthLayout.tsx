@@ -16,7 +16,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       router.push("/auth");
     }
     setLoading(false);
-  }, [basicUserInfo]);
+  }, [basicUserInfo, router]);
 
   if (loading) {
     return null;
