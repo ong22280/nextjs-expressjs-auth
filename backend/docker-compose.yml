@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: "mysql"
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+    volumes:
+      - "db_data:/var/lib/mysql"
+      - "./docker/provision/mysql/init:/docker-entrypoint-initdb.d"
+    networks:
+      - mysql_network
+      - redux-toolkit-auth
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - "-ppassword"
+      retries: 3
+      timeout: 5s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 8080:80
+    depends_on:
+      - mysql
+    networks:
+      - mysql_network
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "db_redis:/data"
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 5s
+    networks:
+      - redux-toolkit-auth
+
+  server:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/mydb?schema=public"
+
+networks:
+  mysql_network:
+    driver: bridge
+  redux-toolkit-auth:
+    driver: bridge
+
+volumes:
+  db_data:
+  db_redis:

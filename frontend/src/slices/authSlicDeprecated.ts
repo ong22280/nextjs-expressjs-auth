@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
 import { AxiosError } from "axios";
 import { showNotification } from "./notificationSlice";
-import { AuthApiState, NewUser, User, UserBasicInfo } from "@/types/authTypes";
 import { NotificationType } from "@/types/notificationType";
 
 const initialState: AuthApiState = {

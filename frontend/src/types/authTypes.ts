@@ -25,5 +25,4 @@ type AuthApiState = {
   error: string | null;
 };
 
-// export all the types
-export type { User, NewUser, UserBasicInfo, UserProfileData, AuthApiState };
+// export type { User, NewUser, UserBasicInfo, UserProfileData, AuthApiState };
