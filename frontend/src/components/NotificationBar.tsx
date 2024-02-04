@@ -1,3 +1,5 @@
+"use client";
+
 import { useAppSelector } from "../libs/hooks/redux-hooks";
 import { hideNotification } from "../slices/notificationSlice";
 import { useAppDispatch } from "../libs/hooks/redux-hooks";

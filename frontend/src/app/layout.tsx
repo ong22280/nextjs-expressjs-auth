@@ -18,8 +18,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <NotificationBar />
       <StoreProvider>
+        <NotificationBar />
         <body className={inter.className}>{children}</body>
       </StoreProvider>
     </html>
