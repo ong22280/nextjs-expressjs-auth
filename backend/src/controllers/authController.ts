@@ -11,37 +11,48 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const registerUser = asyncHandler(async (req: Request, res: Response) => {
+const registerUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
   // const userExists = await User.findOne({ email });
 
-  // Check if user exists
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (existingUser) {
-    res.status(409).json({ message: "The email already exists" });
-  }
-
   try {
-    const user = await prisma.user.create({
+    console.log("Creating user");
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      res.status(409).json({ message: "The email already exists" });
+      return; // Exit the function
+    }
+
+    // encrypt password
+    const saltRounds = 10; // Number of salt rounds for hashing
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = await prisma.user.create({
       data: {
         name,
         email,
-        password, // Note: Password hashing should be done before saving (outside of Prisma)
+        password: hashedPassword,
       },
     });
+    console.log("newUser created");
 
-    generateToken(res, user.id.toString());
+    generateToken(res, newUser.id.toString());
+    console.log("Token generated");
 
     res.status(201).json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
     });
+    console.log("Response sent");
   } catch (error) {
-    throw new BadRequestError("An error occurred in registering the user");
+    throw new BadRequestError(error as string);
   }
 
   // const user = await User.create({

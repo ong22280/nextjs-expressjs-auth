@@ -4,19 +4,19 @@ services:
   mysql:
     image: "mysql"
     ports:
-      - "${FORWARD_DB_PORT:-3306}:3306"
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
       MYSQL_ROOT_HOST: "%"
-      MYSQL_USER: "user"
-      MYSQL_PASSWORD: "password"
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: "root"
     volumes:
       - "db_data:/var/lib/mysql"
       - "./docker/provision/mysql/init:/docker-entrypoint-initdb.d"
     networks:
       - mysql_network
-      - redux-toolkit-auth
+      # - redux-toolkit-auth
     healthcheck:
       test:
         - CMD
@@ -40,34 +40,39 @@ services:
     networks:
       - mysql_network
 
-  redis:
-    image: "redis:alpine"
-    ports:
-      - "6379:6379"
-    volumes:
-      - "db_redis:/data"
-    healthcheck:
-      test:
-        - CMD
-        - redis-cli
-        - ping
-      retries: 3
-      timeout: 5s
-    networks:
-      - redux-toolkit-auth
+  # redis:
+  #   image: "redis:alpine"
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - "db_redis:/data"
+  #   healthcheck:
+  #     test:
+  #       - CMD
+  #       - redis-cli
+  #       - ping
+  #     retries: 3
+  #     timeout: 5s
+  #   networks:
+  #     - redux-toolkit-auth
 
-  server:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/mydb?schema=public"
+  # server:
+  #   build: .
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     DATABASE_URL: "mysql://root:root@mysql:3306/redux_toolkit_auth"
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #   networks:
+  #     - redux-toolkit-auth
 
 networks:
   mysql_network:
     driver: bridge
-  redux-toolkit-auth:
-    driver: bridge
+  # redux-toolkit-auth:
+  #   driver: bridge
 
 volumes:
   db_data:
