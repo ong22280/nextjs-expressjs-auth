@@ -57,7 +57,7 @@ services:
   #     - redux-toolkit-auth
 
   # server:
-  #   build: .
+  #   build: ./docker
   #   ports:
   #     - "8000:8000"
   #   environment:
