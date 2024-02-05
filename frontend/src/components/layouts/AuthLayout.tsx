@@ -6,14 +6,12 @@ import React, { useEffect, useState } from "react";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-
   const [loading, setLoading] = useState(true);
-
   const basicUserInfo = useAppSelector((state) => state.auth.basicUserInfo);
 
   useEffect(() => {
     if (!basicUserInfo) {
-      router.push("/auth");
+      router.push("/login");
     }
     setLoading(false);
   }, [basicUserInfo, router]);

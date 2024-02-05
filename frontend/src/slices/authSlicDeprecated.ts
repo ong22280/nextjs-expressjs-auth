@@ -5,6 +5,7 @@ import { showNotification } from "./notificationSlice";
 import { NotificationType } from "@/types/notificationType";
 
 const initialState: AuthApiState = {
+  token: null,
   basicUserInfo: localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo") as string)
     : null,

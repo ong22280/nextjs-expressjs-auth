@@ -5,6 +5,7 @@ import axiosInstance from "../api/axiosInstance";
 import { AxiosError } from "axios";
 
 const initialState: AuthApiState = {
+  token: null,
   basicUserInfo:
     typeof window !== "undefined" && localStorage.getItem("userInfo")
       ? JSON.parse(localStorage.getItem("userInfo") as string)
@@ -18,19 +19,19 @@ export const login = createAsyncThunk(
   "login",
   async (data: User, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/login", data);
-      const resData = response.data;
-
-      localStorage.setItem("userInfo", JSON.stringify(resData));
-
-      return resData;
+      const { data: response } = await axiosInstance.post("/login", data);
+      // extract the token from the response
+      const token = response.access_token;
+      // save the token in the local storage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userInfo", JSON.stringify(token));
+      getUser();
+      return token;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         const errorResponse = error.response.data;
-
         return rejectWithValue(errorResponse);
       }
-
       throw error;
     }
   }
@@ -80,23 +81,14 @@ export const logout = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk(
-  "users/profile",
-  async (userId: string, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get(`/users/${userId}`);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError && error.response) {
-        const errorResponse = error.response.data;
-
-        return rejectWithValue(errorResponse);
-      }
-
-      throw error;
-    }
+export const getUser = createAsyncThunk("users/profile", async () => {
+  try {
+    const { data: user } = await axiosInstance.get(`/users/me`);
+    return user;
+  } catch (error) {
+    throw error;
   }
-);
+});
 
 const authSlice = createSlice({
   name: "auth",

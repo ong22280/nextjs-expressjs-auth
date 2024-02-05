@@ -6,12 +6,15 @@ import { login } from "../../slices/authSlice";
 import { showNotification } from "../../slices/notificationSlice";
 import Link from "next/link";
 import { NotificationType } from "@/types/notificationType";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const router = useRouter();
 
   const handleLogin = async () => {
     // This is only a basic validation of inputs. Improve this as needed.
@@ -22,6 +25,7 @@ const Login = () => {
           password,
         })
       );
+      router.push("/home")
     } else {
       dispatch(
         showNotification({

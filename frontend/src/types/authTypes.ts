@@ -19,10 +19,9 @@ type UserProfileData = {
 };
 
 type AuthApiState = {
+  token: string | null;
   basicUserInfo?: UserBasicInfo | null;
   userProfileData?: UserProfileData | null;
   status: "idle" | "loading" | "failed";
   error: string | null;
 };
-
-// export type { User, NewUser, UserBasicInfo, UserProfileData, AuthApiState };

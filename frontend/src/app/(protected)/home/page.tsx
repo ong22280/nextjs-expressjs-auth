@@ -14,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     if (basicUserInfo) {
-      dispatch(getUser(basicUserInfo.id));
+      dispatch(getUser());
     }
   }, [basicUserInfo, dispatch]);
 
