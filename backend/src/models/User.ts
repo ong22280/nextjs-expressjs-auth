@@ -1,42 +1,25 @@
-// import mongoose, { Document, Schema } from "mongoose";
-// import bcrypt from "bcryptjs";
+class User {
+  private email: string;
+  private password: string;
 
-// export interface IUser extends Document {
-//   name: string;
-//   email: string;
-//   password: string;
-//   comparePassword: (enteredPassword: string) => boolean;
-// }
+  constructor(email: string, password: string) {
+    this.email = email;
+    this.password = password;
+  }
 
-// const userSchema = new Schema<IUser>({
-//   name: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//   },
-//   password: {
-//     type: String,
-//     required: true,
-//   },
-// });
+  getEmail() {
+    return this.email;
+  }
 
-// userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) {
-//     next();
-//   }
+  getPassword() {
+    return this.password;
+  }
 
-//   const salt = await bcrypt.genSalt(10);
-//   this.password = await bcrypt.hash(this.password, salt);
-// });
+  setEmail(email: string) {
+    this.email = email;
+  }
 
-// userSchema.methods.comparePassword = async function (enteredPassword: string) {
-//   return await bcrypt.compare(enteredPassword, this.password);
-// };
-
-// const User = mongoose.model("User", userSchema);
-
-// export default User;
+  setPassword(password: string) {
+    this.password = password;
+  }
+}
