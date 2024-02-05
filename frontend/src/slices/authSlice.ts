@@ -1,11 +1,14 @@
+"use client";
+
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
 import { AxiosError } from "axios";
 
 const initialState: AuthApiState = {
-  basicUserInfo: localStorage.getItem("userInfo")
-    ? JSON.parse(localStorage.getItem("userInfo") as string)
-    : null,
+  basicUserInfo:
+    typeof window !== "undefined" && localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo") as string)
+      : null,
   userProfileData: undefined,
   status: "idle",
   error: null,
