@@ -1,31 +1,31 @@
-"use client";
-
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axiosInstance from "../api/axiosInstance";
+import axiosInstance from "../../api/axiosInstance";
 import { AxiosError } from "axios";
+import { RootState } from "@/store/store";
 
 const initialState: AuthApiState = {
-  token: null,
-  basicUserInfo:
-    typeof window !== "undefined" && localStorage.getItem("userInfo")
-      ? JSON.parse(localStorage.getItem("userInfo") as string)
+  token:
+    typeof window !== "undefined" && localStorage.getItem("authToken")
+      ? (JSON.parse(localStorage.getItem("authToken") || "").token as null)
       : null,
-  userProfileData: undefined,
+  userInfo:
+    typeof window !== "undefined" && localStorage.getItem("authToken")
+      ? (JSON.parse(localStorage.getItem("authToken") || "").userInfo as null)
+      : null,
   status: "idle",
   error: null,
 };
 
 export const login = createAsyncThunk(
-  "login",
+  "auth/login",
   async (data: User, { rejectWithValue }) => {
     try {
       const { data: response } = await axiosInstance.post("/login", data);
-      // extract the token from the response
-      const token = response.access_token;
-      // save the token in the local storage
-      localStorage.setItem("token", token);
-      localStorage.setItem("userInfo", JSON.stringify(token));
-      getUser();
+      const token: string = response.access_token;
+      const authToken: AuthTokenState = {
+        token,
+      };
+      localStorage.setItem("authToken", JSON.stringify(authToken));
       return token;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
@@ -38,52 +38,50 @@ export const login = createAsyncThunk(
 );
 
 export const register = createAsyncThunk(
-  "register",
+  "auth/register",
   async (data: NewUser, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/register", data);
       const resData = response.data;
-
-      localStorage.setItem("userInfo", JSON.stringify(resData));
-
       return resData;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         const errorResponse = error.response.data;
-
         return rejectWithValue(errorResponse);
       }
-
       throw error;
     }
   }
 );
 
 export const logout = createAsyncThunk(
-  "logout",
+  "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/logout", {});
       const resData = response.data;
-
-      localStorage.removeItem("userInfo");
-
+      localStorage.removeItem("authToken");
       return resData;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         const errorResponse = error.response.data;
-
         return rejectWithValue(errorResponse);
       }
-
       throw error;
     }
   }
 );
 
-export const getUser = createAsyncThunk("users/profile", async () => {
+export const getUser = createAsyncThunk("auth/me", async () => {
   try {
+    const token = JSON.parse(localStorage.getItem("authToken") || "").token;
     const { data: user } = await axiosInstance.get(`/users/me`);
+    const userInfo: UserBasicInfo = user;
+    const authToken: AuthTokenState = {
+      token,
+      userInfo,
+    };
+    localStorage.setItem("authToken", JSON.stringify(authToken));
     return user;
   } catch (error) {
     throw error;
@@ -100,13 +98,10 @@ const authSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(
-        login.fulfilled,
-        (state, action: PayloadAction<UserBasicInfo>) => {
-          state.status = "idle";
-          state.basicUserInfo = action.payload;
-        }
-      )
+      .addCase(login.fulfilled, (state, action: PayloadAction<any>) => {
+        state.status = "idle";
+        state.token = action.payload;
+      })
       .addCase(login.rejected, (state, action) => {
         state.status = "failed";
         if (action.payload) {
@@ -121,13 +116,9 @@ const authSlice = createSlice({
         state.status = "loading";
         state.error = null;
       })
-      .addCase(
-        register.fulfilled,
-        (state, action: PayloadAction<UserBasicInfo>) => {
-          state.status = "idle";
-          state.basicUserInfo = action.payload;
-        }
-      )
+      .addCase(register.fulfilled, (state, action: PayloadAction<string>) => {
+        state.status = "idle";
+      })
       .addCase(register.rejected, (state, action) => {
         state.status = "failed";
         if (action.payload) {
@@ -144,7 +135,8 @@ const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.status = "idle";
-        state.basicUserInfo = null;
+        state.token = null;
+        state.userInfo = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.status = "failed";
@@ -162,7 +154,7 @@ const authSlice = createSlice({
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.status = "idle";
-        state.userProfileData = action.payload;
+        state.userInfo = action.payload;
       })
       .addCase(getUser.rejected, (state, action) => {
         state.status = "failed";
@@ -177,4 +169,6 @@ const authSlice = createSlice({
   },
 });
 
+export const {} = authSlice.actions;
+export const authSelector = (state: RootState) => state.auth;
 export default authSlice.reducer;

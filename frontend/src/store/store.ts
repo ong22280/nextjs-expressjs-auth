@@ -1,18 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../slices/authSlice";
-import userReducer from "../slices/userSlice";
-import notificationReducer from "../slices/notificationSlice";
-import { axiosMiddleware } from "../api/middleware";
+import authReducer from "./slices/authSlice";
+import notificationReducer from "./slices/notificationSlice";
 
 export const makeStore = () =>
   configureStore({
     reducer: {
       auth: authReducer,
-      user: userReducer,
       notification: notificationReducer,
     },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(axiosMiddleware),
   });
 
 // Infer the type of makeStore

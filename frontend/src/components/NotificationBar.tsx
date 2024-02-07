@@ -1,8 +1,8 @@
 "use client";
 
-import { useAppSelector } from "../libs/hooks/redux-hooks";
-import { hideNotification } from "../slices/notificationSlice";
-import { useAppDispatch } from "../libs/hooks/redux-hooks";
+import { useAppSelector } from "../hooks/redux-hooks";
+import { hideNotification } from "../store/slices/notificationSlice";
+import { useAppDispatch } from "../hooks/redux-hooks";
 import React from "react";
 
 const NotificationBar = () => {

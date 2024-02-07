@@ -8,9 +8,9 @@ const axiosInstance = axios.create({
 });
 
 // Get token from local storage
-function getToken() {
+export function getToken() {
   try {
-    const token = localStorage.getItem("token") || "";
+    const token = JSON.parse(localStorage.getItem("authToken") || "").token;
     return token || null;
   } catch (e) {
     console.error("Failed to parse auth object from local storage:", e);

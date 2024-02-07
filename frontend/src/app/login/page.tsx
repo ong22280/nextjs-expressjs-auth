@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useAppDispatch } from "../../libs/hooks/redux-hooks";
-import { login } from "../../slices/authSlice";
-import { showNotification } from "../../slices/notificationSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
+import { authSelector, getUser, login } from "../../store/slices/authSlice";
+import { showNotification } from "../../store/slices/notificationSlice";
 import Link from "next/link";
 import { NotificationType } from "@/types/notificationType";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
   const dispatch = useAppDispatch();
+  const authReducer = useAppSelector(authSelector);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,13 +20,24 @@ const Login = () => {
   const handleLogin = async () => {
     // This is only a basic validation of inputs. Improve this as needed.
     if (email && password) {
-      dispatch(
-        login({
-          email,
-          password,
-        })
-      );
-      router.push("/home")
+      const actionResult = await dispatch(login({ email, password }));
+      if (login.fulfilled.match(actionResult)) {
+        await dispatch(getUser());
+        dispatch(
+          showNotification({
+            message: "Logged in successfully",
+            type: NotificationType.Success,
+          })
+        );
+        router.push("/home");
+      } else if (login.rejected.match(actionResult)) {
+        dispatch(
+          showNotification({
+            message: "Invalid email or password",
+            type: NotificationType.Error,
+          })
+        );
+      }
     } else {
       dispatch(
         showNotification({
@@ -39,9 +51,14 @@ const Login = () => {
   return (
     <>
       <div className="max-w-xs mx-auto mt-20">
+        {/* Display authentication status */}
+        <div>
+          {authReducer.status === "loading" && <p>Loading...</p>}
+          {authReducer.status === "failed" && <p>Error: {authReducer.error}</p>}
+        </div>
         <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
-            <h1 className="text-center text-xl font-bold">Login</h1>
+            <h1 className="text-center text-xl font-bold text-black">Login</h1>
           </div>
           <div className="mb-4">
             <label

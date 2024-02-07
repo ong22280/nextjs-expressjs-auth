@@ -13,15 +13,14 @@ type UserBasicInfo = {
   email: string;
 };
 
-type UserProfileData = {
-  name: string;
-  email: string;
-};
-
 type AuthApiState = {
   token: string | null;
-  basicUserInfo?: UserBasicInfo | null;
-  userProfileData?: UserProfileData | null;
+  userInfo?: UserBasicInfo | null;
   status: "idle" | "loading" | "failed";
   error: string | null;
+};
+
+type AuthTokenState = {
+  token?: string | null;
+  userInfo?: UserBasicInfo | null;
 };
