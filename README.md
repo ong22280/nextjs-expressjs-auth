@@ -1,5 +1,16 @@
 # Redux Toolkit Authentication
 
+<!-- Manage Your React (TypeScript) Application State Using Redux Toolkit
+Prabhashi Meddegoda
+Stackademic
+
+Published in
+Stackademic
+3 -->
+
+<!-- add reference -->
+reference: Prabhashi Meddegoda. "Manage Your React (TypeScript) Application State Using Redux Toolkit." Stackademic, 2021. [medium](https://medium.com/stackademic/manage-your-react-typescript-application-state-using-redux-toolkit-926d3b4abaa7)
+
 1.  **Redux Setup:** Redux Toolkit providing a configureStore() function that encapsulates various configurations setup.
 
     ```javascript
